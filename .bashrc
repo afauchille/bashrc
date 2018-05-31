@@ -26,6 +26,7 @@ PS1="$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ "
 ### Bashrc ###
 alias sourcerc='source $BASE_BASHRC'
 alias bashrc='emacs $BASHRC; sourcerc'
+alias gotobash='pushd $BASHRC_DIR'
 
 
 ### Bash Tools ###
