@@ -3,7 +3,9 @@
 #########      Conf      ############
 #####################################
 
-BASHRC=$HOME/.bash/.bashrc
+BASE_BASHRC=$HOME/.bashrc
+BASHRC_DIR=$HOME/.bash
+BASHRC=$BASHRC_DIR/.bashrc
 
 ### Input configuration ###
 # Set keyboard repeat delay / rate
@@ -18,7 +20,7 @@ export PATH=$PATH:$HOME/.scripts
 
 
 ### Bashrc ###
-alias sourcerc='source $BASHRC'
+alias sourcerc='source $BASE_BASHRC'
 alias bashrc='emacs $BASHRC; sourcerc'
 
 
