@@ -126,10 +126,13 @@ my_test ()
     echo "I am a test function" $@
 }
 
-# Reminder: duplicate output to a log, while preserving color :)
-#unbuffer echo -e "\e[31mTest.\e[0m" | tee teest.log
+duplog ()
+{
+    script -efq -c "$1" | tee "$1".log
+}
 
 PROJECTS="app engine"
 PLATFORMS="android html5 linux64 ui"
 TEEST="aa ab ac ad ae af ba"
 my_complete --futur my_test "$TEEST" "$PROJECTS" "$PLATFORMS"
+complete -c duplog
