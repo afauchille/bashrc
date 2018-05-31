@@ -19,6 +19,10 @@ fi
 export PATH=$PATH:$HOME/.scripts
 
 
+### PS1 ###
+PS1="$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ "
+
+
 ### Bashrc ###
 alias sourcerc='source $BASE_BASHRC'
 alias bashrc='emacs $BASHRC; sourcerc'
