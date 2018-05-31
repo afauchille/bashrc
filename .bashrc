@@ -31,11 +31,9 @@ mkcd ()
     cd $1
 }
 
-# TODO (need brain)
-faketty ()
-{
-    script -qfc "$(printf "%q " "$@")" /dev/null
-}
+### Git ###
+alias gg="git gui"
+alias gk="gitk"
 
 ### Custom autocomplete  ###
 
