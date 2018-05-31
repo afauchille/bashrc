@@ -31,6 +31,7 @@ alias gotobash='pushd $BASHRC_DIR'
 
 ### Bash Tools ###
 alias ret='echo $?'
+alias uncolor="sed -r \"s/\\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\""
 
 mkcd ()
 {
