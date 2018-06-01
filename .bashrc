@@ -45,7 +45,7 @@ alias gk="gitk"
 
 ### Custom autocomplete  ###
 
-# Reference increment #OP
+# Reference increment
 incr ()
 {
     eval "${1}=$(($1 + 1))"
@@ -122,6 +122,29 @@ my_complete ()
     fi
 }
 
+format_usage ()
+{
+    if [ "$1" != -bypass ]; then #rec
+        $(format_usage -bypass -noarg "[-bypass] [-noarg] ARGS...")
+    else
+        shift
+    fi
+
+    local cond=""
+    if [ "$1" = -noarg ]; then
+        cond=" || [ \$# = 0 ]"
+        shift
+    fi
+    FORMAT="if [ \"\$1\" = \"-h\" ] $cond; then
+        echo Usage:;"
+        for i in "$@"; do
+            FORMAT+="echo -e \"\t\$FUNCNAME $i\";";
+        done;
+        FORMAT+="return;
+        fi;"
+
+     echo "eval $FORMAT"
+}
 my_test ()
 {
     echo "I am a test function" $@
