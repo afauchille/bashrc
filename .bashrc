@@ -34,8 +34,14 @@ alias gotoscripts='pushd $SCRIPTS_DIR'
 
 
 ### Bash Tools ###
-alias ret='echo $?'
 alias uncolor="sed -r \"s/\\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\""
+
+ret ()
+{
+    local return_value="$?"
+    echo "$return_value"
+    return "$return_value"
+}
 
 mkcd ()
 {
