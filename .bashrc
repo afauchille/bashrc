@@ -6,6 +6,7 @@
 BASE_BASHRC=$HOME/.bashrc
 BASHRC_DIR=$HOME/.bash
 BASHRC=$BASHRC_DIR/.bashrc
+SCRIPTS_DIR=$HOME/.scripts
 
 ### Input configuration ###
 # Set keyboard repeat delay / rate
@@ -18,6 +19,8 @@ fi
 ### PATH ###
 export PATH=$PATH:$HOME/.scripts
 
+### Default editor for some commands (i.e. cron, incron) ###
+export VISUAL=emacs
 
 ### PS1 ###
 PS1="$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ "
@@ -27,6 +30,7 @@ PS1="$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ "
 alias sourcerc='source $BASE_BASHRC'
 alias bashrc='emacs $BASHRC; sourcerc'
 alias gotobash='pushd $BASHRC_DIR'
+alias gotoscripts='pushd $SCRIPTS_DIR'
 
 
 ### Bash Tools ###
@@ -39,9 +43,23 @@ mkcd ()
     cd $1
 }
 
+# do history
+mode ()
+{
+    local cmd
+    while :; do
+        # PS1 du pauvre
+        echo -en "\e[1;92m$USER@$HOSTNAME:\e[34m$PWD\n\e[95m\$ [$1]\e[39m "
+        read cmd
+        eval "$1 $cmd"
+    done
+}
+complete -c mode
+
 ### Git ###
 alias gg="git gui"
 alias gk="gitk"
+alias gst="git status"
 
 ### Custom autocomplete  ###
 
