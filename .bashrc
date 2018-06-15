@@ -169,18 +169,22 @@ format_usage ()
 
      echo "eval $FORMAT"
 }
+
+duplog ()
+{
+    script -efq -c "$1" | tee "$1".log
+}
+complete -c duplog
+
 my_test ()
 {
     echo "I am a test function" $@
 }
 
-duplog ()
 {
-    script -efq -c "$1" | tee "$1".log
 }
 
 PROJECTS="app engine"
 PLATFORMS="android html5 linux64 ui"
 TEEST="aa ab ac ad ae af ba"
 my_complete --futur my_test "$TEEST" "$PROJECTS" "$PLATFORMS"
-complete -c duplog
