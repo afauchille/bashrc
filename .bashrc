@@ -10,7 +10,7 @@ SCRIPTS_DIR=$HOME/.scripts
 
 ### Input configuration ###
 # Set keyboard repeat delay / rate
-xset r rate 200 65
+xset r rate 180 80
 # Set mouse wheel speed value in ~/.imwheel
 if command -v imwheel > /dev/null; then
     imwheel --kill &> /dev/null
@@ -22,9 +22,20 @@ export PATH=$PATH:$HOME/.scripts
 ### Default editor for some commands (i.e. cron, incron) ###
 export VISUAL=emacs
 
-### PS1 ###
-PS1="$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ "
+### Java
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
+
+### PS1 ###
+# \r trick for right align
+PS1_cpy="$PS1"
+#PS1='$(set_ps1)'
+set_ps1()
+{
+#    echo -e $(printf "%s%$((${COLUMNS}+1))s%s\r%s" "\e[1m" '$?' "\e[0m" "$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\n$ ")
+    echo -e "$PS1_cpy \e[1;4;32m$(__git_ps1 | cut -c 2-)\e[0m\n$ "
+}
+PS1=$(printf "%s%$((${COLUMNS}+1))s%s\r%s" "\e[1m" '$?' "\e[0m" "$PS1 \e[1;4;32m\$(__git_ps1 | cut -c 2-)\e[0m\e[34m \$(date +%H:%M:%S)\e[0m\n$ ")
 
 ### Bashrc ###
 alias sourcerc='source $BASE_BASHRC'
@@ -34,6 +45,9 @@ alias gotoscripts='pushd $SCRIPTS_DIR'
 
 
 ### Bash Tools ###
+alias e=emacs
+alias lcat=lolcat
+alias lll='ll --time-style=full-iso'
 alias uncolor="sed -r \"s/\\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g\""
 
 ret ()
@@ -47,6 +61,18 @@ mkcd ()
 {
     mkdir -p $1
     cd $1
+}
+
+isnumber ()
+{
+    local re='^[0-9]+$'
+    if [ $# = 0 ]; then
+        return 1
+    fi
+    if [[ $1 =~ $re ]]; then
+        return 0
+    fi
+    return 1
 }
 
 # do history
@@ -63,9 +89,20 @@ mode ()
 complete -c mode
 
 ### Git ###
+alias ga="git add"
 alias gg="git gui"
 alias gk="gitk"
 alias gst="git status"
+alias gckt="git checkout" # FIXME ; __git_complete gckt _git_checkout
+alias gf="git fetch"
+alias gdiff="git diff"
+alias gpl="git pull"
+alias gl="git log"
+alias gcm="git commit"
+
+# TODO: make it generic
+alias check-todo='git diff-index -G TODO HEAD'
+alias check-fixme='git diff-index -G FIXME HEAD'
 
 ### Custom autocomplete  ###
 
@@ -83,9 +120,9 @@ incr ()
 my_compgen ()
 {
     if [ $1 = "-W" ]; then
-	if [ $# = 3 ]; then # empty candidate string (it is therefore not even passed as the fourth argument
-	    echo $2
-	fi
+        if [ $# = 3 ]; then # empty candidate string (it is therefore not even passed as the fourth argument
+            echo $2
+        fi
         local s=${@: -1}
         for i in $2; do
             if [[ ${i,,} = ${s,,}* ]]; then # magic bash sugar for case-insensitive prefix testing
@@ -178,11 +215,61 @@ complete -c duplog
 
 my_test ()
 {
-    echo "I am a test function" $@
+    $(getopt -a 1 ---name -b 2 ---pos)
 }
 
+getopt ()
 {
+    local body
+    read -d '' body << EOM
+for arg in "\$@"; do
+    if [ "\$arg" = "-h" ]; then
+        echo "It works!";
+    else
+        echo \$arg;
+    fi;
+done;
+EOM
+    local i=0
+    local opt
+    local opts
+    local arity
+    local arities
+    local name
+    local names
+    while [ $# != 0 ]; do
+        opt="$1"
+        shift
+
+        arity="$1"
+        if isnumber $arity; then
+            shift
+        else
+            arity=1
+        fi
+
+        name=""
+        if [ "$(echo $1 | cut -c 1-3)" = "---" ]; then
+            name=$(echo $1 | cut -c 4-)
+            shift
+        fi
+
+        opts[$i]="$opt"
+        arities[$i]="$arity"
+        names[$i]="$name"
+        incr i
+    done
+    for i in $(seq 0 ${#opts[@]})
+    do
+        : #echo "${opts[$i]} ${arities[$i]} ${names[$i]}"
+    done
+
+    echo "eval $body"
 }
+
+
+# unset -f FUNNAME
+# unset VARNAME
 
 PROJECTS="app engine"
 PLATFORMS="android html5 linux64 ui"
